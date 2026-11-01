@@ -19,6 +19,7 @@ button, input, textarea { font: inherit; }
 .container { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
 .skip-link { position: fixed; top: 12px; left: 12px; z-index: 50; padding: 12px 20px; background: var(--orange); color: #150c06; transform: translateY(-160%); font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
+.announcement-bar { padding-block: 8px; background: var(--surface); color: var(--muted); border-bottom: 1px solid var(--border); text-align: center; font-size: .8rem; overflow-wrap: anywhere; }
 .header { position: sticky; top: 0; z-index: 20; background: #0b0c0ef5; border-bottom: 1px solid var(--border); }
 .nav { min-height: 82px; display: flex; justify-content: space-between; align-items: center; gap: 30px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 750; letter-spacing: .09em; }
