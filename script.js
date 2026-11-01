@@ -5,27 +5,60 @@ const menuBtn = document.querySelector(".menu-btn");
 const mobile = window.matchMedia("(max-width: 800px)");
 const form = document.getElementById("form-contato");
 const statusEl = document.getElementById("form-status");
+const header = document.querySelector(".header");
+
+// Measure the actual space below the sticky header, including the top notice.
+function ajustarEspacoMenu() {
+  if (!mobile.matches) return;
+  const viewport = window.visualViewport;
+  const limite = viewport ? viewport.offsetTop + viewport.height : window.innerHeight;
+  const espaco = Math.max(0, limite - header.getBoundingClientRect().bottom);
+  menu.style.setProperty("--menu-space", `${espaco}px`);
+}
+
+let ajusteMenuPendente = false;
+function agendarAjusteMenu() {
+  if (!mobile.matches || menuBtn.getAttribute("aria-expanded") !== "true" || ajusteMenuPendente) return;
+  ajusteMenuPendente = true;
+  window.requestAnimationFrame(() => {
+    ajusteMenuPendente = false;
+    ajustarEspacoMenu();
+  });
+}
+
+window.addEventListener("resize", agendarAjusteMenu);
+window.addEventListener("scroll", agendarAjusteMenu, { passive: true });
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", agendarAjusteMenu);
+  window.visualViewport.addEventListener("scroll", agendarAjusteMenu);
+}
+if ("ResizeObserver" in window) new ResizeObserver(agendarAjusteMenu).observe(header);
 
 function fecharMenu(devolverFoco = false) {
-  if (menuBtn.getAttribute("aria-expanded") !== "true") return;
   menu.classList.remove("aberto");
+  menu.hidden = mobile.matches;
   menuBtn.setAttribute("aria-expanded", "false");
   menuBtn.setAttribute("aria-label", "Abrir menu");
   if (devolverFoco) menuBtn.focus();
 }
 
 menuBtn.addEventListener("click", () => {
+  if (!mobile.matches) return;
   const aberto = menu.classList.toggle("aberto");
+  menu.hidden = !aberto;
   menuBtn.setAttribute("aria-expanded", String(aberto));
   menuBtn.setAttribute("aria-label", aberto ? "Fechar menu" : "Abrir menu");
+  if (aberto) ajustarEspacoMenu();
 });
 
 menu.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => {
     // Move focus to the destination before hiding the mobile links.
     const destino = document.querySelector(link.hash);
-    destino.setAttribute("tabindex", "-1");
-    destino.focus({ preventScroll: true });
+    if (destino) {
+      destino.setAttribute("tabindex", "-1");
+      destino.focus({ preventScroll: true });
+    }
     fecharMenu();
   });
 });
@@ -57,6 +90,7 @@ mobile.addEventListener("change", () => {
 // Enable progressive enhancement only after the menu handlers are ready.
 menuBtn.hidden = false;
 document.documentElement.classList.add("js");
+fecharMenu();
 form.querySelector("button[type=submit]").disabled = false;
 
 // Native validation can stop submission before the submit handler runs.
