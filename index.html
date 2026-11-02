@@ -79,12 +79,41 @@
         <details><summary>Os dados do painel são reais?</summary><p>Não. Os valores, quantidades e tarefas são fictícios e servem apenas para demonstrar a organização da interface.</p></details>
         <details><summary>Há integração com corretoras ou cotações?</summary><p>Esta página não possui integrações. Fontes de dados, permissões e requisitos de acesso precisariam ser definidos no escopo de um produto real.</p></details>
         <details><summary>A plataforma faz recomendações de investimento?</summary><p>A demonstração não recomenda ativos, prevê rendimentos ou executa operações. O objetivo é apresentar um conceito de organização de informações.</p></details>
-        <details><summary>Como registrar interesse no projeto?</summary><p>Use o formulário abaixo para gerar um resumo em arquivo de texto. Como não foi fornecido um canal de contato real, o pedido não será enviado automaticamente.</p></details>
+        <details><summary>Como registrar interesse no projeto?</summary><p>Preencha o formulário de contato abaixo com os detalhes do seu projeto. Ao enviar, você será direcionado ao Formspree para acompanhar o resultado do envio.</p></details>
       </div></div>
     </section>
     <section class="contact-section" id="contato" aria-labelledby="titulo-contato">
-      <div class="container contact-grid"><div><p class="eyebrow">VAMOS CONVERSAR SOBRE O SEU CENÁRIO</p><h2 id="titulo-contato">Uma nova visão<br>começa com<br><span>uma conversa.</span></h2><p class="section-lead">Conte como sua equipe trabalha e o que você gostaria de organizar melhor.</p><p class="contact-notice" id="aviso-contato"><strong>Contato ainda não configurado.</strong> Nenhum e-mail ou telefone real foi fornecido. O formulário gera um arquivo local para você guardar. Nada é enviado ou armazenado no site.</p></div>
-      <form id="form-contato" class="formulario" aria-describedby="aviso-contato"><h3>Prepare sua solicitação</h3><div class="campo"><label for="nome">Nome <span>(obrigatório)</span></label><input id="nome" name="nome" autocomplete="name" maxlength="120" required></div><div class="campo"><label for="empresa">Empresa <span>(opcional)</span></label><input id="empresa" name="empresa" autocomplete="organization" maxlength="160"></div><div class="campo"><label for="email">E-mail <span>(obrigatório)</span></label><input type="email" id="email" name="email" autocomplete="email" maxlength="254" required></div><div class="campo"><label for="mensagem">Como podemos ajudar? <span>(obrigatório)</span></label><textarea id="mensagem" name="mensagem" rows="4" maxlength="4000" placeholder="Descreva seu cenário e os recursos que gostaria de explorar." required></textarea></div><button class="btn" type="submit" disabled>Baixar solicitação (.txt) <span aria-hidden="true">↓</span></button><noscript><p>Ative o JavaScript para gerar o arquivo. Nenhum dado será enviado.</p></noscript><p id="form-status" class="form-status" role="status" aria-live="polite"></p></form></div>
+      <div class="container contact-grid"><div><p class="eyebrow">VAMOS CONVERSAR SOBRE O SEU CENÁRIO</p><h2 id="titulo-contato">Uma nova visão<br>começa com<br><span>uma conversa.</span></h2><p class="section-lead">Conte como sua equipe trabalha e o que você gostaria de organizar melhor.</p><p class="contact-notice" id="aviso-contato"><strong>Envie os detalhes do seu projeto.</strong> Ao enviar, seus dados serão encaminhados ao Formspree. Aguarde a resposta do serviço para verificar o resultado.</p></div>
+      <form id="form-contato" class="formulario" action="https://formspree.io/f/xyeebprp" method="POST" aria-labelledby="titulo-formulario" aria-describedby="aviso-contato">
+        <h3 id="titulo-formulario">Conte sobre seu projeto</h3>
+        <div class="campo">
+          <label for="nome">Nome completo <span>(obrigatório)</span></label>
+          <input type="text" id="nome" name="nome" autocomplete="name" maxlength="120" aria-describedby="erro-nome" required>
+          <p id="erro-nome" class="campo-erro" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="email">E-mail <span>(obrigatório)</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" maxlength="254" aria-describedby="erro-email" required>
+          <p id="erro-email" class="campo-erro" hidden></p>
+        </div>
+        <div class="campo">
+          <label for="tipo-projeto">Tipo de projeto <span>(opcional)</span></label>
+          <select id="tipo-projeto" name="tipo-projeto">
+            <option value="">Selecione uma opção</option>
+            <option value="site-institucional">Site institucional</option>
+            <option value="landing-page">Landing page</option>
+            <option value="loja-virtual">Loja virtual</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="mensagem">Mensagem <span>(obrigatório)</span></label>
+          <textarea id="mensagem" name="mensagem" rows="5" maxlength="4000" placeholder="Descreva seu projeto, seus objetivos e o que você precisa." aria-describedby="erro-mensagem" required></textarea>
+          <p id="erro-mensagem" class="campo-erro" hidden></p>
+        </div>
+        <button class="btn" type="submit">Enviar mensagem <span aria-hidden="true">→</span></button>
+        <p id="form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      </form></div>
     </section>
   </main>
   <footer><div class="container footer-main"><a class="brand" href="#inicio"><span class="brand-mark" aria-hidden="true">V</span>VERTEX</a><p>Perspectiva para o próximo passo.</p><a class="text-link" href="#inicio">Voltar ao início <span aria-hidden="true">↑</span></a></div><div class="container footer-bottom"><p>VERTEX — nome ilustrativo. Projeto demonstrativo de software.</p><p>Sem dados de mercado ou operações reais.</p></div></footer>

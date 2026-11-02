@@ -91,57 +91,57 @@ mobile.addEventListener("change", () => {
 menuBtn.hidden = false;
 document.documentElement.classList.add("js");
 fecharMenu();
-form.querySelector("button[type=submit]").disabled = false;
 
-// Native validation can stop submission before the submit handler runs.
-form.addEventListener("invalid", (evento) => {
-  evento.target.setAttribute("aria-invalid", "true");
-  statusEl.textContent = "";
-}, true);
+// Preserve inline validation; valid submissions use the form's native POST.
+const camposObrigatorios = [...form.querySelectorAll('[required]')];
+const mensagensObrigatorias = {
+  nome: 'Informe seu nome completo.',
+  email: 'Informe seu e-mail.',
+  mensagem: 'Escreva uma mensagem sobre seu projeto.'
+};
 
-form.addEventListener("submit", (evento) => {
-  evento.preventDefault();
-  const campos = [...form.querySelectorAll("input, textarea")];
-  let primeiroInvalido = null;
-  campos.forEach((campo) => {
-    campo.setCustomValidity(campo.required && !campo.value.trim() ? "Preencha este campo." : "");
-    const invalido = !campo.checkValidity();
-    campo.setAttribute("aria-invalid", String(invalido));
-    if (invalido && !primeiroInvalido) primeiroInvalido = campo;
-  });
-  if (primeiroInvalido) {
-    primeiroInvalido.reportValidity();
-    primeiroInvalido.focus();
+function validarCampo(campo) {
+  let erro = '';
+  if (!campo.value.trim()) {
+    erro = mensagensObrigatorias[campo.id];
+  } else if (campo.type === 'email' && campo.validity.typeMismatch) {
+    erro = 'Informe um e-mail válido, como nome@exemplo.com.';
+  }
+
+  const mensagem = document.getElementById('erro-' + campo.id);
+  mensagem.textContent = erro;
+  mensagem.hidden = !erro;
+  campo.setAttribute('aria-invalid', String(Boolean(erro)));
+  return !erro;
+}
+
+form.addEventListener('submit', (evento) => {
+  const invalidos = camposObrigatorios.filter((campo) => !validarCampo(campo));
+  if (invalidos.length) {
+    evento.preventDefault();
+    statusEl.textContent = invalidos.length === 1
+      ? 'Revise o campo indicado antes de continuar.'
+      : 'Revise os ' + invalidos.length + ' campos indicados antes de continuar.';
+    invalidos[0].focus();
     return;
   }
 
-  const dados = new FormData(form);
-  const texto = [
-    "SOLICITAÇÃO — VERTEX (projeto demonstrativo)",
-    "Este arquivo foi gerado localmente. O pedido NÃO foi enviado.",
-    "",
-    "Nome: " + dados.get("nome").trim(),
-    "Empresa: " + (dados.get("empresa").trim() || "Não informada"),
-    "E-mail para retorno: " + dados.get("email").trim(),
-    "",
-    "Cenário e necessidades:",
-    dados.get("mensagem").trim()
-  ].join("\n");
-  const url = URL.createObjectURL(new Blob(["\ufeff" + texto], { type: "text/plain;charset=utf-8" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "solicitacao-vertex.txt";
-  document.body.append(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-  statusEl.textContent = "Arquivo gerado para download. O pedido não foi enviado. Seus dados continuam aqui para você revisar.";
+  // Let the browser navigate to Formspree; only the service confirms delivery.
+  statusEl.textContent = '';
 });
 
-form.addEventListener("input", (evento) => {
-  if (evento.target.matches("input, textarea")) {
-    evento.target.setCustomValidity("");
-    evento.target.removeAttribute("aria-invalid");
-    statusEl.textContent = "";
-  }
+camposObrigatorios.forEach((campo) => {
+  campo.addEventListener('blur', () => validarCampo(campo));
+  campo.addEventListener('input', () => {
+    if (campo.hasAttribute('aria-invalid')) validarCampo(campo);
+    statusEl.textContent = '';
+  });
 });
+
+form.addEventListener('change', () => {
+  statusEl.textContent = '';
+});
+
+// Without JavaScript, required and type="email" retain native HTML validation.
+// Enable custom accessible messages only once all form handlers are installed.
+form.noValidate = true;
